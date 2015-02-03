@@ -661,7 +661,7 @@ StrongZombie.prototype.crush = function(player) {
   var damage = calculateAttackDamage(this);
 
   if (this.strength > player.strength) {
-    damage += Math.floor(damage/2);
+    damage += Math.floor(damage * 0.8);
   }
 
   console.log("Zombie crushes " + player.name + " for " + damage + " damage.");
@@ -673,9 +673,34 @@ StrongZombie.prototype.crush = function(player) {
 
 
 /**
- * calculateAttackDamage(creature)
+ * spit(player)
  * -----------------------------
+ Calculate the zombie's base attack damage by passing this instance to the `calculateAttackDamage` function.  Player takes this amount of damage.  
+Print any zombie spit message you'd like; just include the player's name.
+
+Player takes additional damage if their current health is less than half of max health.  
+Additional damage should equal the floor of 70% of the base zombie attack damage.
+
+You should be able to invoke this function on a RangedZombie instance.
+
+**Parameters**  
+`player`: Player, The player to spit at.
+
+**Returns**: number, Damage dealt by spitting.
  */
+
+ RangedZombie.prototype.spit = function(player) {
+  var damage = calculateAttackDamage(this);
+
+  if (player.health < player.getMaxHealth()) {
+    damage += Math.floor(damage * 0.7);
+  }
+
+  console.log("Zombie crushes " + player.name + " for " + damage + " damage.");
+  player.takeDamage(damage);
+  
+  return damage;
+};
 
 
 /**
