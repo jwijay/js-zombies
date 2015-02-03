@@ -475,34 +475,32 @@ ExplodingZombie.prototype = Object.create(Zombie.prototype, {
 function calculateAttackDamage (creature) {
   var numOfValues = 0;
   var startingNum = 0;
-  switch (creature.constructor.name) {
-    case 'Player':
-      numOfValues = 3;
-      startingNum = 2;
-      break;
-    case 'Zombie':
-      numOfValues = 3;
-      startingNum = 5;
-      break;
-    case 'FastZombie':
-      numOfValues = 4;
-      startingNum = 2;
-      break;
-    case 'StrongZombie':
-      numOfValues = 8;
-      startingNum = 2;
-      break;
-    case 'RangedZombie':
-      numOfValues = 6;
-      startingNum = 2;
-      break;
-    case 'ExplodingZombie':
-      numOfValues = 3;
-      startingNum = 3;
-      break;
-    default:
-      console.log("WAT.");
+  
+  if (creature instanceof(Player)) {
+    numOfValues = 3;
+    startingNum = 2;
   }
+  if (creature instanceof(Zombie)) {
+    numOfValues = 3;
+    startingNum = 5;
+  }
+  if (creature instanceof(FastZombie)) {
+    numOfValues = 4;
+    startingNum = 2;
+  }
+  if (creature instanceof(StrongZombie)) {
+    numOfValues = 8;
+    startingNum = 2;
+  }
+  if (creature instanceof(RangedZombie)) {
+    numOfValues = 6;
+    startingNum = 2;
+  }
+  if (creature instanceof(ExplodingZombie)) {
+    numOfValues = 3;
+    startingNum = 3;
+  }
+
   var randomizer = Math.floor((Math.random() * numOfValues) + startingNum);
   return Math.floor((creature.strength / randomizer) + (Math.log(creature.speed) / randomizer * 10));
 }
@@ -702,6 +700,38 @@ You should be able to invoke this function on a RangedZombie instance.
   return damage;
 };
 
+/**
+ * explode(player)
+ * -----------------------------
+Calculate the zombie's base attack damage by passing this instance to the `calculateAttackDamage` function.  Player takes this amount of damage.  
+Print any zombie explode message you'd like; just include the player's name.
+
+Player takes additional damage if the zombie's speed is greater than the player's and the player's current health is less than half of max health.  
+Additional damage should equal twice the base zombie attack damage.
+
+ExplodingZombie should now be dead (health set to 0, `isAlive` set to false).
+
+You should be able to invoke this function on an ExplodingZombie instance.
+
+**Parameters**  
+`player`: Player, The player to explode by.
+
+**Returns**: number, Damage dealt by exploding.
+ */
+
+ExplodingZombie.prototype.explode = function(player) {
+  var damage = calculateAttackDamage(this);
+
+  if ((this.speed > player.speed) && (player.health < player.getMaxHealth())) {
+    damage += damage * 2;
+  }
+
+  console.log("Zombie explodes burning flesh and guts in every direction, damaging " + player.name + " for " + damage + " damage. Goodbye zombie.");
+  player.takeDamage(damage);
+  this.takeDamage(this.health);
+
+  return damage;
+};
 
 /**
  * Sample run.
