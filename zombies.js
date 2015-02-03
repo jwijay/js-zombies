@@ -627,7 +627,18 @@ player: Player, The player to charge at.
 Returns: number, Damage dealt by charging.
  */
 
+FastZombie.prototype.charge = function(player) {
+  var damage = calculateAttackDamage(this);
 
+  if (this.speed > player.speed) {
+    damage += Math.floor(damage/2);
+  }
+
+  console.log("Zombie charges " + player.name + " for " + damage + " damage.");
+  player.takeDamage(damage);
+  
+  return damage;
+};
 
 /**
  * calculateAttackDamage(creature)
