@@ -14,42 +14,8 @@ For each test you complete:
 
 ---
 
-### Help
-
-See help with class construction, parameters, properties, and inheritence in  
-[https://github.com/devleague/js-zombies/blob/master/doc/oop-example.pdf](/doc/oop-example.pdf)
-
-When instructed to call the super class, use the `Function.prototype.call` method.  
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/call
-
-```
-// SUPER CLASS
-function Item(name) {
-  this.name = name;
-}
-
-// SUB CLASS
-function Weapon(name, damage) {
-  this.damage = damage;
-  Item.call(this, name); // Call super class
-}
-```
-
-To extend the super class, use the `Object.create` method introduced in  
-https://github.com/devleague/oop-factory-example
-
-```
-// EXTEND SUPER CLASS
-Weapon.prototype = Object.create(Item.prototype, {
-  constructor: {
-    value: Item
-  }
-});
-```
-
-----
-
-## Item(name)
+Item(name)
+-----------------------------
 *Creates an item.*
 
 **Parameters**  
@@ -58,15 +24,14 @@ Weapon.prototype = Object.create(Item.prototype, {
 **Public Properties**  
 `name`: string
 
-----
 
-## Weapon(name, damage)
+Weapon(name, damage)
+-----------------------------
 *Creates a weapon item.*  
 *Weapon items can be equipped for use in battle.*
 
-The Weapon class constructor will call  
-the super class `Item` constructor  
-while passing in the 1 `Item` constructor param
+Use the `call` method on the Item constructor.  
+Set Weapon's prototype to a new instance of Item.
 
 **Parameters**  
 `name`: string, The weapon's name.  
@@ -75,18 +40,14 @@ while passing in the 1 `Item` constructor param
 **Public Properties**  
 `damage`: number
 
-#### Weapon Extends Item Class
-The Weapon class will extend the Item class prototype
 
-----
-
-## Food(name, energy)
+Food(name, energy)
+-----------------------------
 *Creates a food item.*  
 *Food items give energy, restoring health to the player.*
 
-The Food class constructor will call   
-the super class `Item` constructor  
-while passing in the 1 Item constructor param
+Use the `call` method on the Item constructor.  
+Set Food's prototype to a new instance of Item.
 
 **Parameters**  
 `name`: string, The food's name.  
@@ -95,15 +56,11 @@ while passing in the 1 Item constructor param
 **Public Properties**  
 `energy`: number
 
-#### Food Extends Item Class
-The Food class will extend the Item class prototype
 
-----
-
-## Player(name, health, strength, speed)
+Player(name, health, strength, speed)
+-----------------------------
 *Creates a player in a zombie-infested world.*
 
-### Player Constructor method
 **Parameters**  
 `name`: string, The player's name.  
 `health`: number, The player's health.  
@@ -120,34 +77,22 @@ The Food class will extend the Item class prototype
 `strength`: number  
 `speed`: number  
 `isAlive`: boolean, Default value should be `true`.  
-`equipped`: Weapon/boolean, Default value should be `false`.    
+`equipped`: Weapon/boolean, Default value should be `false`.  
+`getPack`: method, Returns private variable `pack`.  
+`getMaxHealth`: method, Returns private variable `maxHealth`.
 
-## Player.Methods
 
-### getPack()
-*Player accesses his pack*
-
-Returns private variable `pack` in `string` form.
-
----
-
-### getMaxHealth()
-*How Sick are you?*
-
-Returns private variable `maxHealth`.
-
-----
-
-### checkPack()
+checkPack()
+-----------------------------
 *Player checks the contents of their pack.*  
 
 Nicely format and print the items in the player's pack.  
 To access the pack, be sure to use Player's `getPack` method.  
 You should be able to invoke this function on a Player instance.
 
-----
 
-### takeItem(item)
+takeItem(item)
+-----------------------------
 *Player takes an item from the world and places it into their pack.*
 
 Player's pack can only hold a maximum of 3 items, so if they try to add more than that, return false.  
@@ -161,9 +106,9 @@ You should be able to invoke this function on a Player instance.
 
 **Returns**: boolean, Whether player was able to store item in pack.
 
-----
 
-### discardItem(item)
+discardItem(item)
+-----------------------------
 *Player discards an item from their pack.*
 
 Use Array's `indexOf` method to check if the pack contains the item.  
@@ -185,9 +130,9 @@ You should be able to invoke this function on a Player instance.
 
 **Returns**: boolean, Whether player was able to remove item from pack.
 
-----
 
-### equip(itemToEquip)
+equip(itemToEquip)
+-----------------------------
 *Player equips a weapon item.*
 
 Player can only equip Weapon instances.  
@@ -201,9 +146,9 @@ You should be able to invoke this function on a Player instance.
 **Parameters**  
 `itemToEquip`: Weapon, The weapon item to equip.
 
-----
 
-### eat(itemToEat)
+eat(itemToEat)
+-----------------------------
 *Player eats a food item, restoring their health.*
 
 Player can only eat Food instances.  
@@ -218,9 +163,9 @@ You should be able to invoke this function on a Player instance.
 **Parameters**  
 `itemToEat`: Food, The food item to eat.
 
-----
 
-### useItem(item)
+useItem(item)
+-----------------------------
 *Player uses an item from the pack.*
 
 If the item is a weapon, the player should equip the item.  
@@ -230,9 +175,9 @@ You should be able to invoke this function on a Player instance.
 **Parameters**  
 `item`: Item/Weapon/Food, The item to use.
 
-----
 
-### equippedWith()
+equippedWith()
+-----------------------------
 *Player checks their equipment.*
 
 Prints the player's name and equipped weapon's name.  
@@ -242,10 +187,9 @@ You should be able to invoke this function on a Player instance.
 
 **Returns**: weapon name or `false`: string/boolean, Weapon name or `false` if nothing is equipped.
 
-----
 
-
-## Zombie (health, strength, speed)
+Zombie(health, strength, speed)
+-----------------------------
 *Creates a normal zombie.*
 
 **Parameters**  
@@ -262,9 +206,9 @@ You should be able to invoke this function on a Player instance.
 `speed`: number  
 `isAlive`: boolean, Default value should be `true`.
 
-----
 
-## FastZombie(health, strength, speed)
+FastZombie(health, strength, speed)
+-----------------------------
 *Creates a fast zombie.*
 
 Use the `call` method on the Zombie constructor.  
@@ -275,12 +219,9 @@ Set FastZombie's prototype to a new instance of Zombie.
 `strength`: number, The zombie's strength.  
 `speed`: number, The zombie's speed.
 
-#### FastZombie Extends Zombie Class
-The FastZombie class will extend the Zombie class prototype
 
-----
-
-## StrongZombie(health, strength, speed)
+StrongZombie(health, strength, speed)
+-----------------------------
 *Creates a strong zombie.*
 
 Use the `call` method on the Zombie constructor.  
@@ -291,14 +232,9 @@ Set StrongZombie's prototype to a new instance of Zombie.
 `strength`: number, The zombie's strength.  
 `speed`: number, The zombie's speed.
 
-#### StrongZombie Extends Zombie Class
-The StrongZombie class will extend the Zombie class prototype
 
-
-
-----
-
-## RangedZombie(health, strength, speed)
+RangedZombie(health, strength, speed)
+-----------------------------
 *Creates a ranged zombie.*
 
 Use the `call` method on the Zombie constructor.  
@@ -309,14 +245,9 @@ Set RangedZombie's prototype to a new instance of Zombie.
 `strength`: number, The zombie's strength.  
 `speed`: number, The zombie's speed.
 
-#### RangedZombie Extends Zombie Class
-The RangedZombie class will extend the Zombie class prototype
 
-
-
-----
-
-## ExplodingZombie(health, strength, speed)
+ExplodingZombie(health, strength, speed)
+-----------------------------
 *Creates an exploding zombie.*
 
 Use the `call` method on the Zombie constructor.  
@@ -327,5 +258,160 @@ Set ExplodingZombie's prototype to a new instance of Zombie.
 `strength`: number, The zombie's strength.  
 `speed`: number, The zombie's speed.
 
-#### ExplodingZombie Extends Zombie Class
-The ExplodingZombie class will extend the Zombie class prototype
+
+calculateAttackDamage(creature)
+-----------------------------
+*Calculates the attack damage of a creature instance.*
+
+Use `instanceof` to determine what type of object the creature is.  
+Then, based on the type, set a variable called `randomizer` equal to a `Math.floor((Math.random() * x) + y)` formula to achieve the following random values:  
+-- Player:           `2, 3, 4`  
+-- Zombie:           `5, 6, 7`  
+-- FastZombie:       `2, 3, 4, 5`  
+-- StrongZombie:     `2, 3, 4, 5, 6, 7, 8, 9`  
+-- RangedZombie:     `2, 3, 4, 5, 6, 7`  
+-- ExplodingZombie:  `3, 4, 5`  
+Lastly, set the damage to the following formula and return this damage:  
+`Math.floor((creature.strength / randomizer) + (Math.log(creature.speed) / randomizer * 10))`.
+
+**Parameters**  
+`creature`: Player/Zombie/FastZombie/StrongZombie/RangedZombie/ExplodingZombie, The creature instance whose attack damage is to be calculated.
+
+**Returns**: number, The amount of damage the creature will inflict.
+
+
+takeDamage(damage)
+-----------------------------
+*Zombie takes damage.*
+
+The zombie's health decreases by the amount of damage taken.  
+The zombie's health should not drop lower than 0.  
+If the zombie's health is 0, set their `isAlive` property to false.  
+If the zombie is dead, print a message that the zombie is slain.  
+You should be able to invoke this function on a Zombie instance.
+ 
+**Parameters**  
+`damage`: number, The amount of damage the zombie receives.
+
+
+attack(zombie)
+-----------------------------
+*Player attacks a zombie.*
+
+Calculate the player's base attack damage by passing this instance to the `calculateAttackDamage` function.
+
+If the player has a weapon equipped, print a message with the weapon's name.  
+The total damage then becomes the base player damage plus the weapon damage.
+
+If the player has no weapon equipped, print any weaponless attack to console.  
+In this case, the total damage is just the base player damage.
+
+The zombie then takes all this damage.  
+You should be able to invoke this function on a Player instance.
+
+**Parameters**  
+`zombie`: Zombie, The zombie to attack.
+
+**Returns**: number, Damage dealt by attacking.
+
+
+takeDamage(damage)
+-----------------------------
+*Player takes damage.*
+
+The player's health decreases by the amount of damage taken.  
+The player's health should not drop lower than 0.  
+If the player's health is 0, set their `isAlive` property to false.  
+If the player is dead, print a message that they're dead and the game is over.  
+You should be able to invoke this function on a Player instance.
+ 
+**Parameters**  
+`damage`: number, The amount of damage the player receives.
+
+
+attack(player)
+-----------------------------
+*Zombie attacks a player.*
+
+Calculate the zombie's attack damage by passing this instance to the `calculateAttackDamage` function.  Player takes this amount of damage.  
+Print any zombie attack message you'd like; just include the player's name.  
+You should be able to invoke this function on a Zombie instance.
+ 
+**Parameters**  
+`player`: Player, The player to attack.
+
+**Returns**: number, Damage dealt by attacking.
+
+
+charge(player)
+-----------------------------
+*FastZombie charges at full speed.*
+
+Calculate the zombie's base attack damage by passing this instance to the `calculateAttackDamage` function.  Player takes this amount of damage.  
+Print any zombie charge message you'd like; just include the player's name.
+
+Player takes additional damage if the zombie's speed is greater than the player's.  
+Additional damage should equal the floor of half the base zombie attack damage.
+
+You should be able to invoke this function on a FastZombie instance.
+
+**Parameters**  
+`player`: Player, The player to charge at.
+
+**Returns**: number, Damage dealt by charging.
+
+
+crush(player)
+-----------------------------
+*StrongZombie crushes with might.*
+
+Calculate the zombie's base attack damage by passing this instance to the `calculateAttackDamage` function.  Player takes this amount of damage.  
+Print any zombie crush message you'd like; just include the player's name.
+
+Player takes additional damage if the zombie's strength is greater than the player's.  
+Additional damage should equal the floor of 80% of the base zombie attack damage.
+
+You should be able to invoke this function on a StrongZombie instance.
+
+**Parameters**  
+`player`: Player, The player to crush.
+
+**Returns**: number, Damage dealt by crushing.
+
+
+spit(player)
+-----------------------------
+*RangedZombie spits toxic ooze from afar.*
+
+Calculate the zombie's base attack damage by passing this instance to the `calculateAttackDamage` function.  Player takes this amount of damage.  
+Print any zombie spit message you'd like; just include the player's name.
+
+Player takes additional damage if their current health is less than half of max health.  
+Additional damage should equal the floor of 70% of the base zombie attack damage.
+
+You should be able to invoke this function on a RangedZombie instance.
+
+**Parameters**  
+`player`: Player, The player to spit at.
+
+**Returns**: number, Damage dealt by spitting.
+
+
+explode(player)
+-----------------------------
+*ExplodingZombie explodes burning flesh and guts in every direction.*
+
+Calculate the zombie's base attack damage by passing this instance to the `calculateAttackDamage` function.  Player takes this amount of damage.  
+Print any zombie explode message you'd like; just include the player's name.
+
+Player takes additional damage if the zombie's speed is greater than the player's and the player's current health is less than half of max health.  
+Additional damage should equal twice the base zombie attack damage.
+
+ExplodingZombie should now be dead (health set to 0, `isAlive` set to false).
+
+You should be able to invoke this function on an ExplodingZombie instance.
+
+**Parameters**  
+`player`: Player, The player to explode by.
+
+**Returns**: number, Damage dealt by exploding.
