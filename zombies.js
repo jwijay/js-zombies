@@ -467,6 +467,45 @@ ExplodingZombie.prototype = Object.create(Zombie.prototype, {
   }
 });
 
+/**
+ * calculateAttackDamage(creature)
+ * -----------------------------
+ */
+
+function calculateAttackDamage (creature) {
+  var numOfValues = 0;
+  var startingNum = 0;
+  switch (creature.constructor.name) {
+    case 'Player':
+      numOfValues = 3;
+      startingNum = 2;
+      break;
+    case 'Zombie':
+      numOfValues = 3;
+      startingNum = 5;
+      break;
+    case 'FastZombie':
+      numOfValues = 4;
+      startingNum = 2;
+      break;
+    case 'StrongZombie':
+      numOfValues = 8;
+      startingNum = 2;
+      break;
+    case 'RangedZombie':
+      numOfValues = 6;
+      startingNum = 2;
+      break;
+    case 'ExplodingZombie':
+      numOfValues = 3;
+      startingNum = 3;
+      break;
+    default:
+      console.log("WAT.");
+  }
+  var randomizer = Math.floor((Math.random() * numOfValues) + startingNum);
+  return Math.floor((creature.strength / randomizer) + (Math.log(creature.speed) / randomizer * 10));
+}
 
 /**
  * Sample run.
