@@ -641,9 +641,36 @@ FastZombie.prototype.charge = function(player) {
 };
 
 /**
- * calculateAttackDamage(creature)
+ * crush(player)
  * -----------------------------
+Calculate the zombie's base attack damage by passing this instance to the `calculateAttackDamage` function.  Player takes this amount of damage.  
+Print any zombie crush message you'd like; just include the player's name.
+
+Player takes additional damage if the zombie's strength is greater than the player's.  
+Additional damage should equal the floor of 80% of the base zombie attack damage.
+
+You should be able to invoke this function on a StrongZombie instance.
+
+**Parameters**  
+`player`: Player, The player to crush.
+
+**Returns**: number, Damage dealt by crushing.
  */
+
+StrongZombie.prototype.crush = function(player) {
+  var damage = calculateAttackDamage(this);
+
+  if (this.strength > player.strength) {
+    damage += Math.floor(damage/2);
+  }
+
+  console.log("Zombie crushes " + player.name + " for " + damage + " damage.");
+  player.takeDamage(damage);
+  
+  return damage;
+};
+
+
 
 /**
  * calculateAttackDamage(creature)
