@@ -212,7 +212,7 @@ Player.prototype.discardItem = function (item) {
     return false;
   } else {
     this.getPack().splice(itemIndex, 1);
-    console.log("Excelsior! " + this.name + ", you dropped dat " + item.name + " on the ground.");
+    console.log("Excelsior! " + this.name + ", you've dropped dat " + item.name + " on the ground.");
     return true;
   }
 };
@@ -237,6 +237,19 @@ Player.prototype.discardItem = function (item) {
  * @param {Weapon} itemToEquip  The weapon item to equip.
  */
 
+Player.prototype.equip = function (itemToEquip) {
+  //check if item is indeed a weapon, and if equipped is false
+  var itemIndex = this.getPack().indexOf(itemToEquip);
+  if (itemToEquip instanceof Weapon && (itemIndex !== -1)) {
+    if (this.equipped !== false) {
+      this.getPack().push(this.equipped);
+    } 
+    this.equipped = itemToEquip;
+    console.log('itemToEquip', itemToEquip);
+    console.log('this.equipped', this.equipped);
+    this.getPack().splice(itemIndex, 1);
+  }
+};
 
 /**
  * Player Class Method => eat(itemToEat)
@@ -256,6 +269,14 @@ Player.prototype.discardItem = function (item) {
  * @name eat
  * @param {Food} itemToEat  The food item to eat.
  */
+
+Player.prototype.eat = function (itemToEat) {
+  var itemIndex = this.getPack().indexOf(itemToEat);
+  if (itemToEat instanceof Food && (itemIndex !== -1)) {
+    this.health = Math.min(this.getMaxHealth(), this.health + itemToEat.energy);
+    this.getPack().splice(itemIndex,1);
+  }
+};
 
 
 /**
