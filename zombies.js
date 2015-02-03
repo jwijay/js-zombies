@@ -508,6 +508,50 @@ function calculateAttackDamage (creature) {
 }
 
 /**
+ * takeDamage(damage)
+ * -----------------------------
+ */
+
+//zombie's health decreases by amount of damage taken
+//zombie's health does not drop lower than 0
+//if zombie's health drops to 0, isAlive -> false
+//if zombie is dead, print message
+Zombie.prototype.takeDamage = function(damage) {
+  this.health = Math.max(0, this.health - damage);
+  if (this.health === 0) {
+    this.isAlive = false;
+    console.log("The zombie is dead as butts.");
+  }
+};
+
+/**
+ * calculateAttackDamage(creature)
+ * -----------------------------
+ */
+
+
+/**
+ * calculateAttackDamage(creature)
+ * -----------------------------
+ */
+
+/**
+ * calculateAttackDamage(creature)
+ * -----------------------------
+ */
+
+/**
+ * calculateAttackDamage(creature)
+ * -----------------------------
+ */
+
+/**
+ * calculateAttackDamage(creature)
+ * -----------------------------
+ */
+
+
+/**
  * Sample run.
  * Feel free to edit this and check your game logic.
  */
