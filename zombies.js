@@ -1,4 +1,6 @@
 /**
+ * Class => Item(name)
+ * -----------------------------
  * Creates an item.
  *
  * @name Item
@@ -6,13 +8,19 @@
  * @property {string} name
  */
 
+function Item (name) {
+  this.name = name;
+}
 
 /**
+ * Class => Weapon(name, damage)
+ * -----------------------------
  * Creates a weapon item.
  * Weapon items can be equipped for use in battle.
  *
- * Use the call method on the Item constructor.
- * Set Weapon's prototype to a new instance of Item.
+ * The Weapon class constructor will call 
+ *   the super class (Item) constructor
+ *   while passing in the 1 Item constructor param
  *
  * @name Weapon
  * @param {string} name     The weapon's name.
@@ -20,13 +28,30 @@
  * @property {number} damage
  */
 
+function Weapon(name, damage) {
+  this.damage = damage;
+  Item.call(this, name);
+}
 
 /**
+ * Weapon Extends Item Class
+ * -----------------------------
+ */
+Weapon.prototype = Object.create(Item.prototype, {
+  constructor: {
+    value: Item
+  }
+});
+
+/**
+ * Class => Food(name, energy)
+ * -----------------------------
  * Creates a food item.
  * Food items give energy, restoring health to the player.
  *
- * Use the call method on the Item constructor.
- * Set Food's prototype to a new instance of Item.
+ * The Food class constructor will call 
+ *   the super class (Item) constructor
+ *   while passing in the 1 Item constructor param
  *
  * @name Food
  * @param {string} name       The food's name.
@@ -34,8 +59,25 @@
  * @property {number} energy
  */
 
+function Food (name, energy) {
+  this.energy = energy;
+  Item.call(this, name);
+}
 
 /**
+ * Food Extends Item Class
+ * -----------------------------
+ */
+
+Food.prototype = Object.create(Item.prototype, {
+  constructor: {
+    value: Item
+  }
+});
+
+/**
+ * Class => Player(name, health, strength, speed)
+ * -----------------------------
  * Creates a player in a zombie-infested world.
  *
  * @name Player
@@ -55,8 +97,39 @@
  * @property {method} getMaxHealth         Returns private variable `maxHealth`.
  */
 
+function Player (name, health, strength, speed) {
+  var pack = [];
+  var maxHealth = health;
+  
+  this.name = name;
+  this.health = health;
+  this.strength = strength;
+  this.speed = speed;
+  this.isAlive = true;
+  this.equipped = false;
+
+  this.getPack = function() {
+    return pack;
+  };
+
+  this.getMaxHealth = function() {
+    return maxHealth;
+  };
+
+  this.addItem = function(item) {
+    pack.push(item);
+  };
+
+  this.dropItem = function(item) {
+    if (pack.indexOf(item) !== -1) {
+      pack.pop(item);
+    }
+  };
+}
 
 /**
+ * Player Class Method => checkPack()
+ * -----------------------------
  * Player checks the contents of their pack.
  *
  * Nicely format and print the items in the player's pack.
@@ -66,8 +139,19 @@
  * @name checkPack
  */
 
+Player.prototype.checkPack = function () {
+    var result = "";
+    var pack = this.getPack();
+    //TODO: figure out how to do this without a LOOP O___O
+    for (var i = 0; i < pack.length; i++) {
+      result += pack[i] + ", ";
+    }
+    console.log(result.slice(0,-2));
+};
 
 /**
+ * Player Class Method => takeItem(item)
+ * -----------------------------
  * Player takes an item from the world and places it into their pack.
  *
  * Player's pack can only hold a maximum of 3 items, so if they try to add more
@@ -83,8 +167,21 @@
  * @return {boolean} true/false     Whether player was able to store item in pack.
  */
 
+Player.prototype.takeItem = function (item) {
+  if (this.getPack().length === 3) {
+    console.log("Dawg, yo' pack be too full to add dem itemz.");
+    return false;
+  } else {
+    //holy poops. mutable private data types (arrays and objects) can be edited when you return them through public methods.
+    this.getPack().push(item);
+    console.log("Coolio! " + this.name + ", you've added " + item.name + " to your sack successfully.");
+    return true;
+  }
+};
 
 /**
+ * Player Class Method => discardItem(item)
+ * -----------------------------
  * Player discards an item from their pack.
  *
  * Use Array's indexOf method to check if the pack contains the item.
@@ -108,8 +205,21 @@
  * @return {boolean} true/false     Whether player was able to remove item from pack.
  */
 
+Player.prototype.discardItem = function (item) {
+  var itemIndex = this.getPack().indexOf(item);
+  if (itemIndex === -1) {
+    console.log("Y U TRYING 2 DELETE ITEMZ NOT IN UR PACK. Your pack was left untouched.");
+    return false;
+  } else {
+    this.getPack().splice(itemIndex, 1);
+    console.log("Excelsior! " + this.name + ", you've dropped dat " + item.name + " on the ground.");
+    return true;
+  }
+};
 
 /**
+ * Player Class Method => equip(itemToEquip)
+ * -----------------------------
  * Player equips a weapon item.
  *
  * Player can only equip Weapon instances.
@@ -127,8 +237,21 @@
  * @param {Weapon} itemToEquip  The weapon item to equip.
  */
 
+Player.prototype.equip = function (itemToEquip) {
+  //check if item is indeed a weapon, and if equipped is false
+  var itemIndex = this.getPack().indexOf(itemToEquip);
+  if (itemToEquip instanceof Weapon && (itemIndex !== -1)) {
+    if (this.equipped !== false) {
+      this.getPack().push(this.equipped);
+    } 
+    this.equipped = itemToEquip;
+    this.getPack().splice(itemIndex, 1);
+  }
+};
 
 /**
+ * Player Class Method => eat(itemToEat)
+ * -----------------------------
  * Player eats a food item, restoring their health.
  *
  * Player can only eat Food instances.
@@ -145,8 +268,18 @@
  * @param {Food} itemToEat  The food item to eat.
  */
 
+Player.prototype.eat = function (itemToEat) {
+  var itemIndex = this.getPack().indexOf(itemToEat);
+  if (itemToEat instanceof Food && (itemIndex !== -1)) {
+    this.health = Math.min(this.getMaxHealth(), this.health + itemToEat.energy);
+    this.getPack().splice(itemIndex,1);
+  }
+};
+
 
 /**
+ * Player Class Method => useItem(item)
+ * -----------------------------
  * Player uses an item from the pack.
  *
  * If the item is a weapon, the player should equip the item.
@@ -157,8 +290,18 @@
  * @param {Item/Weapon/Food} item   The item to use.
  */
 
+Player.prototype.useItem = function (item) {
+  if (item instanceof Weapon) {
+    this.equip(item);
+  }
+  if (item instanceof Food) {
+    this.eat(item);
+  }
+};
 
 /**
+ * Player Class Method => equippedWith()
+ * -----------------------------
  * Player checks their equipment.
  *
  * Prints the player's name and equipped weapon's name.
@@ -170,8 +313,18 @@
  * @return {string/boolean}   Weapon name or false if nothing is equipped.
  */
 
+Player.prototype.equippedWith = function () {
+  if (this.equipped === false) {
+    return false;
+  } else {
+    console.log(this.name + " has " + this.equipped + " equipped!");
+    return this.equipped.name;
+  }
+};
 
 /**
+ * Class => Zombie(health, strength, speed)
+ * -----------------------------
  * Creates a normal zombie.
  *
  * @name Zombie
@@ -185,12 +338,23 @@
  * @property {boolean} isAlive      Default value should be `true`.
  */
 
+function Zombie (health, strength, speed) {
+  var maxHealth = health;
+
+  this.health = health;
+  this.strength = strength;
+  this.speed = speed;
+  this.isAlive = true;
+}
 
 /**
+ * Class => FastZombie(health, strength, speed)
+ * -----------------------------
  * Creates a fast zombie.
  *
- * Use the call method on the Zombie constructor.
- * Set FastZombie's prototype to a new instance of Zombie.
+ * The FastZombie class constructor will call 
+ *   the super class (Zombie) constructor
+ *   while passing in the 3 Zombie constructor params
  *
  * @name FastZombie
  * @param {number} health           The zombie's health.
@@ -198,12 +362,29 @@
  * @param {number} speed            The zombie's speed.
  */
 
+function FastZombie (health, strength, speed) {
+  Zombie.call(this, health, strength, speed);
+}
 
 /**
+ * FastZombie Extends Zombie Class
+ * -----------------------------
+ */
+
+FastZombie.prototype = Object.create(Zombie.prototype, {
+  constructor : {
+    value: Zombie
+  }
+});
+
+/**
+ * Class => StrongZombie(health, strength, speed)
+ * -----------------------------
  * Creates a strong zombie.
  *
- * Use the call method on the Zombie constructor.
- * Set StrongZombie's prototype to a new instance of Zombie.
+ * The StrongZombie class constructor will call 
+ *   the super class (Zombie) constructor
+ *   while passing in the 3 Zombie constructor params
  *
  * @name StrongZombie
  * @param {number} health           The zombie's health.
@@ -211,12 +392,29 @@
  * @param {number} speed            The zombie's speed.
  */
 
+function StrongZombie (health, strength, speed) {
+  Zombie.call(this, health, strength, speed);
+}
 
 /**
+ * StrongZombie Extends Zombie Class
+ * -----------------------------
+ */
+
+StrongZombie.prototype = Object.create(Zombie.prototype, {
+  constructor : {
+    value: Zombie
+  }
+});
+
+/**
+ * Class => RangedZombie(health, strength, speed)
+ * -----------------------------
  * Creates a ranged zombie.
  *
- * Use the call method on the Zombie constructor.
- * Set RangedZombie's prototype to a new instance of Zombie.
+ * The RangedZombie class constructor will call 
+ *   the super class (Zombie) constructor
+ *   while passing in the 3 Zombie constructor params
  *
  * @name RangedZombie
  * @param {number} health           The zombie's health.
@@ -224,12 +422,29 @@
  * @param {number} speed            The zombie's speed.
  */
 
+function RangedZombie (health, strength, speed) {
+  Zombie.call(this, health, strength, speed);
+}
 
 /**
+ * RangedZombie Extends Zombie Class
+ * -----------------------------
+ */
+
+RangedZombie.prototype = Object.create(Zombie.prototype, {
+  constructor : {
+    value : Zombie
+  }
+});
+
+/**
+ * Class => ExplodingZombie(health, strength, speed)
+ * -----------------------------
  * Creates an exploding zombie.
  *
- * Use the call method on the Zombie constructor.
- * Set ExplodingZombie's prototype to a new instance of Zombie.
+ * The ExplodingZombie class constructor will call 
+ *   the super class (Zombie) constructor
+ *   while passing in the 3 Zombie constructor params
  *
  * @name ExplodingZombie
  * @param {number} health           The zombie's health.
@@ -237,164 +452,60 @@
  * @param {number} speed            The zombie's speed.
  */
 
+function ExplodingZombie(health, strength, speed) {
+  Zombie.call(this, health, strength, speed);
+}
 
 /**
- * Calculates the attack damage of a creature instance.
- *
- * Use `instanceof` to determine what type of object creature is.
- * Then, based on the type, set a variable called `randomizer` equal to
- *   a `Math.floor((Math.random() * x) + y)` formula to achieve the following
- *   random values:
- * -- Player:           2, 3, 4
- * -- Zombie:           5, 6, 7
- * -- FastZombie:       2, 3, 4, 5
- * -- StrongZombie:     2, 3, 4, 5, 6, 7, 8, 9
- * -- RangedZombie:     2, 3, 4, 5, 6, 7
- * -- ExplodingZombie:  3, 4, 5
- * Lastly, set the damage to the following formula and return this damage:
- *   `Math.floor((creature.strength / randomizer) + (Math.log(creature.speed) / randomizer * 10))`.
- *
- * @name calculateAttackDamage
- * @param {Player/Zombie/FastZombie/StrongZombie/RangedZombie/ExplodingZombie} creature
- *   The creature instance whose attack damage is to be calculated.
- * @return {number}   The amount of damage the creature will inflict.
+ * ExplodingZombie Extends Zombie Class
+ * -----------------------------
  */
 
+ExplodingZombie.prototype = Object.create(Zombie.prototype, {
+  constructor : {
+    value : Zombie
+  }
+});
 
 /**
- * Zombie takes damage.
- *
- * The zombie's health decreases by the amount of damage taken.
- * The zombie's health should not become lower than 0.
- * If the zombie's health is 0, set their `isAlive` property to false.
- * If the zombie is dead, print a message that the zombie is slain.
- * You should be able to invoke this function on a Zombie instance.
- *
- * @name takeDamage
- * @param {number} damage   The amount of damage the zombie receives.
+ * calculateAttackDamage(creature)
+ * -----------------------------
  */
 
-
-/**
- * Player attacks a zombie.
- *
- * Calculate the player's base attack damage by passing this instance to the
- *   calculateAttackDamage function.
- * If the player has a weapon equipped, print a message with the weapon's name.
- *   The total damage then becomes the base player damage plus the weapon damage.
- * If the player has no weapon equipped, print any weaponless attack to console.
- *   In this case, the total damage is just the base player damage.
- * The zombie then takes all this damage.
- * You should be able to invoke this function on a Player instance.
- *
- * @name attack
- * @param {Zombie} zombie   The zombie to attack.
- * @return {number}         Damage dealt by attacking.
- */
-
-
-/**
- * Player takes damage.
- *
- * The player's health decreases by the amount of damage taken.
- * The player's health should not become lower than 0.
- * If the player's health is 0, set their `isAlive` property to false.
- * If the player is dead, print a message that they're dead and the game is over.
- * You should be able to invoke this function on a Player instance.
- *
- * @name takeDamage
- * @param {number} damage   The amount of damage the player receives.
- */
-
-
-/**
- * Zombie attacks a player.
- *
- * Calculate the zombie's attack damage by passing this instance to the
- *   calculateAttackDamage function.  Player takes this amount of damage.
- * Print any zombie attack message you'd like; just include the player's name.
- * You should be able to invoke this function on a Zombie instance.
- *
- * @name attack
- * @param {Player} player   The player to attack.
- * @return {number}         Damage dealt by attacking.
- */
-
-
-/**
- * FastZombie charges at full speed.
- *
- * Calculate the zombie's base attack damage by passing this instance to the 
- *   calculateAttackDamage function.  Player takes this amount of damage.
- * Print any zombie charge message you'd like; just include the player's name.
- *
- * Player takes additional damage if the zombie's speed is greater than the player's.
- * Additional damage should equal the floor of half the base zombie attack damage.
- *
- * You should be able to invoke this function on a FastZombie instance.
- *
- * @name charge
- * @param {Player} player   The player to charge at.
- * @return {number}         Damage dealt by charging.
- */
-
-
-/**
- * StrongZombie crushes with might.
- *
- * Calculate the zombie's base attack damage by passing this instance to the 
- *   calculateAttackDamage function.  Player takes this amount of damage.
- * Print any zombie crush message you'd like; just include the player's name.
- *
- * Player takes additional damage if the zombie's strength is greater than the player's.
- * Additional damage should equal the floor of 80% of the base zombie attack damage.
- *
- * You should be able to invoke this function on a StrongZombie instance.
- *
- * @name crush
- * @param {Player} player   The player to crush.
- * @return {number}         Damage dealt by crushing.
- */
-
-
-/**
- * RangedZombie spits toxic ooze from afar.
- *
- * Calculate the zombie's base attack damage by passing this instance to the 
- *   calculateAttackDamage function.  Player takes this amount of damage.
- * Print any zombie spit message you'd like; just include the player's name.
- *
- * Player takes additional damage if their current health is less than half of max health.
- * Additional damage should equal the floor of 70% of the base zombie attack damage.
- *
- * You should be able to invoke this function on a RangedZombie instance.
- *
- * @name spit
- * @param {Player} player   The player to spit at.
- * @return {number}         Damage dealt by spitting.
- */
-
-
-/**
- * ExplodingZombie explodes burning flesh and guts in every direction.
- *
- * Calculate the zombie's base attack damage by passing this instance to the 
- *   calculateAttackDamage function.  Player takes this amount of damage.
- * Print any zombie explode message you'd like; just include the player's name.
- *
- * Player takes additional damage if the zombie's speed is greater than the
- *   player's and the player's current health is less than half of max health.
- * Additional damage should equal twice the base zombie attack damage.
- *
- * ExplodingZombie should now be dead (health set to 0, `isAlive` set to false).
- *
- * You should be able to invoke this function on an ExplodingZombie instance.
- *
- * @name explode
- * @param {Player} player   The player to explode by.
- * @return {number}         Damage dealt by exploding.
- */
-
+function calculateAttackDamage (creature) {
+  var numOfValues = 0;
+  var startingNum = 0;
+  switch (creature.constructor.name) {
+    case 'Player':
+      numOfValues = 3;
+      startingNum = 2;
+      break;
+    case 'Zombie':
+      numOfValues = 3;
+      startingNum = 5;
+      break;
+    case 'FastZombie':
+      numOfValues = 4;
+      startingNum = 2;
+      break;
+    case 'StrongZombie':
+      numOfValues = 8;
+      startingNum = 2;
+      break;
+    case 'RangedZombie':
+      numOfValues = 6;
+      startingNum = 2;
+      break;
+    case 'ExplodingZombie':
+      numOfValues = 3;
+      startingNum = 3;
+      break;
+    default:
+      console.log("WAT.");
+  }
+  var randomizer = Math.floor((Math.random() * numOfValues) + startingNum);
+  return Math.floor((creature.strength / randomizer) + (Math.log(creature.speed) / randomizer * 10));
+}
 
 /**
  * Sample run.
