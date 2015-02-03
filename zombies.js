@@ -317,7 +317,7 @@ Player.prototype.equippedWith = function () {
   if (this.equipped === false) {
     return false;
   } else {
-    console.log(this.name + " has " + this.equipped + " equipped!");
+    console.log(this.name + " has " + this.equipped.name + " equipped!");
     return this.equipped.name;
   }
 };
@@ -510,12 +510,16 @@ function calculateAttackDamage (creature) {
 /**
  * takeDamage(damage)
  * -----------------------------
+The zombie's health decreases by the amount of damage taken.
+The zombie's health should not drop lower than 0.
+If the zombie's health is 0, set their isAlive property to false.
+If the zombie is dead, print a message that the zombie is slain.
+You should be able to invoke this function on a Zombie instance.
+
+Parameters
+damage: number, The amount of damage the zombie receives.
  */
 
-//zombie's health decreases by amount of damage taken
-//zombie's health does not drop lower than 0
-//if zombie's health drops to 0, isAlive -> false
-//if zombie is dead, print message
 Zombie.prototype.takeDamage = function(damage) {
   this.health = Math.max(0, this.health - damage);
   if (this.health === 0) {
@@ -525,20 +529,105 @@ Zombie.prototype.takeDamage = function(damage) {
 };
 
 /**
- * calculateAttackDamage(creature)
+ * attack(zombie)
  * -----------------------------
+Calculate the player's base attack damage by passing this instance to the calculateAttackDamage function.
+
+If the player has a weapon equipped, print a message with the weapon's name.
+The total damage then becomes the base player damage plus the weapon damage.
+
+If the player has no weapon equipped, print any weaponless attack to console.
+In this case, the total damage is just the base player damage.
+
+The zombie then takes all this damage.
+You should be able to invoke this function on a Player instance.
+
+Parameters
+zombie: Zombie, The zombie to attack.
+
+Returns: number, Damage dealt by attacking.
  */
 
+Player.prototype.attack = function (zombie) {
+  var damage = calculateAttackDamage(this);
+
+  var weaponlessAttacks = ['eye-ball pokes', 'bitch-slaps', 'whacks', 'no-no-zone kicks'];
+
+  var weaponlessAttack = weaponlessAttacks[Math.floor(Math.random()*weaponlessAttacks.length)];
+
+  if (this.equipped !== false) {
+    damage += this.equipped.damage;
+    console.log(this.name + " strikes zombie with " + this.equippedWith() + " for " + damage + " damage.");
+  } else {
+    console.log(this.name + " " + weaponlessAttack + " zombie for " + damage + " damage!");
+  }
+  zombie.takeDamage(damage);
+
+  return damage;
+};
 
 /**
- * calculateAttackDamage(creature)
+ * takeDamage(damage)
  * -----------------------------
+The player's health decreases by the amount of damage taken.  
+The player's health should not drop lower than 0.  
+If the player's health is 0, set their `isAlive` property to false.  
+If the player is dead, print a message that they're dead and the game is over.  
+You should be able to invoke this function on a Player instance.
+ 
+**Parameters**  
+`damage`: number, The amount of damage the player receives.
  */
 
+Player.prototype.takeDamage = function (damage) {
+  this.health = Math.max(0, this.health - damage);
+  if (this.health === 0) {
+    this.isAlive = false;
+    console.log(this.name + "is dead. THE END.");
+  }
+};
+
 /**
- * calculateAttackDamage(creature)
+ * attack(player)
  * -----------------------------
+Calculate the zombie's attack damage by passing this instance to the calculateAttackDamage function. Player takes this amount of damage.
+Print any zombie attack message you'd like; just include the player's name.
+You should be able to invoke this function on a Zombie instance.
+
+Parameters
+player: Player, The player to attack.
+
+Returns: number, Damage dealt by attacking.
  */
+
+Zombie.prototype.attack = function(player) {
+  var damage = calculateAttackDamage(this);
+  var zombieMoves = ['breathes hazardous breath on', 'Mike-Tyson chomps', 'voraciously chews on', 'violently rips apart'];
+  var zombieMove = zombieMoves[Math.floor(Math.random()*zombieMoves.length)];
+  console.log("Zombie " + zombieMove + " " + player.name + " for " + damage + " damage.");
+  player.takeDamage(damage);
+  
+  return damage;
+};
+
+/**
+ * charge(player)
+ * -----------------------------
+Calculate the zombie's base attack damage by passing this instance to the calculateAttackDamage function. Player takes this amount of damage.
+Print any zombie charge message you'd like; just include the player's name.
+
+Player takes additional damage if the zombie's speed is greater than the player's.
+Additional damage should equal the floor of half the base zombie attack damage.
+
+You should be able to invoke this function on a FastZombie instance.
+
+Parameters
+player: Player, The player to charge at.
+
+Returns: number, Damage dealt by charging.
+ */
+
+
 
 /**
  * calculateAttackDamage(creature)
