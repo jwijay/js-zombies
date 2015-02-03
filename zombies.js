@@ -205,6 +205,17 @@ Player.prototype.takeItem = function (item) {
  * @return {boolean} true/false     Whether player was able to remove item from pack.
  */
 
+Player.prototype.discardItem = function (item) {
+  var itemIndex = this.getPack().indexOf(item);
+  if (itemIndex === -1) {
+    console.log("Y U TRYING 2 DELETE ITEMZ NOT IN UR PACK. Your pack was left untouched.");
+    return false;
+  } else {
+    this.getPack().splice(itemIndex, 1);
+    console.log("Excelsior! " + this.name + ", you dropped dat " + item.name + " on the ground.");
+    return true;
+  }
+};
 
 /**
  * Player Class Method => equip(itemToEquip)
