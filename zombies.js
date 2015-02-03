@@ -8,6 +8,9 @@
  * @property {string} name
  */
 
+function Item (name) {
+  this.name = name;
+}
 
 /**
  * Class => Weapon(name, damage)
@@ -25,13 +28,20 @@
  * @property {number} damage
  */
 
+function Weapon(name, damage) {
+  this.damage = damage;
+  Item.call(this, name);
+}
 
 /**
  * Weapon Extends Item Class
  * -----------------------------
  */
-
-
+Weapon.prototype = Object.create(Item.prototype, {
+  constructor: {
+    value: Item
+  }
+});
 
 /**
  * Class => Food(name, energy)
@@ -49,13 +59,21 @@
  * @property {number} energy
  */
 
+function Food (name, energy) {
+  this.energy = energy;
+  Item.call(this, name);
+}
 
 /**
  * Food Extends Item Class
  * -----------------------------
  */
 
-
+Food.prototype = Object.create(Item.prototype, {
+  constructor: {
+    value: Item
+  }
+});
 
 /**
  * Class => Player(name, health, strength, speed)
