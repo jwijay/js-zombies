@@ -110,12 +110,20 @@ function Player (name, health, strength, speed) {
 
   this.getPack = function() {
     return pack;
-    // var result = "";
-    // //TODO: figure out how to do this without a LOOP O___O
-    // for (var i = 0; i < pack.length; i++) {
-    //   result += pack[i] + ", ";
-    // }
-    // return result.slice(0,-2);
+  };
+
+  this.getMaxHealth = function() {
+    return maxHealth;
+  };
+
+  this.addItem = function(item) {
+    pack.push(item);
+  };
+
+  this.dropItem = function(item) {
+    if (pack.indexOf(item) !== -1) {
+      pack.pop(item);
+    }
   };
 }
 
@@ -131,6 +139,15 @@ function Player (name, health, strength, speed) {
  * @name checkPack
  */
 
+Player.prototype.checkPack = function () {
+    var result = "";
+    var pack = this.getPack();
+    //TODO: figure out how to do this without a LOOP O___O
+    for (var i = 0; i < pack.length; i++) {
+      result += pack[i] + ", ";
+    }
+    console.log(result.slice(0,-2));
+};
 
 /**
  * Player Class Method => takeItem(item)
@@ -150,6 +167,17 @@ function Player (name, health, strength, speed) {
  * @return {boolean} true/false     Whether player was able to store item in pack.
  */
 
+Player.prototype.takeItem = function (item) {
+  if (this.getPack().length === 3) {
+    console.log("Dawg, yo' pack be too full to add dem itemz.");
+    return false;
+  } else {
+    //holy poops. mutable private data types (arrays and objects) can be edited when you return them through public methods.
+    this.getPack().push(item);
+    console.log("Coolio! " + this.name + ", you've added " + item.name + " to your sack successfully.");
+    return true;
+  }
+};
 
 /**
  * Player Class Method => discardItem(item)
