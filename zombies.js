@@ -668,8 +668,6 @@ StrongZombie.prototype.crush = function(player) {
   return damage;
 };
 
-
-
 /**
  * spit(player)
  * -----------------------------
